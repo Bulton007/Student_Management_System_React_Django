@@ -18,38 +18,38 @@ const Login = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+ const handleLogin = async (e) => {
+  e.preventDefault();
 
-    if (!form.username || !form.password) {
-      toast.error("Username and password are required ❌");
-      return;
-    }
+  if (!form.username || !form.password) {
+    toast.error("Username and password are required ❌");
+    return;
+  }
 
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
 
-      const res = await api.post("auth/login/", form);
+    const res = await api.post("auth/login/", {
+      username: form.username.trim(),
+      password: form.password.trim(),
+    });
 
-      localStorage.setItem("access_token", res.data.access);
-      localStorage.setItem("refresh_token", res.data.refresh);
+    localStorage.setItem("access_token", res.data.access);
+    localStorage.setItem("refresh_token", res.data.refresh);
 
-      await fetchMe();
+    await fetchMe();
 
-      toast.success("Login success ✅");
-      navigate("/dashboard");
-    } catch (err) {
-      console.log("LOGIN ERROR:", err?.response?.data || err.message);
+    toast.success("Login success ✅");
+    navigate("/dashboard");
+  } catch (err) {
+    console.log("LOGIN ERROR:", err?.response?.data || err.message);
 
-      if (err?.response?.data?.detail) {
-        toast.error(err.response.data.detail);
-      } else {
-        toast.error("Invalid username or password ❌");
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
+    toast.error(err?.response?.data?.detail || "Invalid username or password ❌");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div
